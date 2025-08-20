@@ -9,14 +9,17 @@
 
 > Deja aquí tus imágenes (diagramas, pantallas de n8n, ejemplo de conversación, etc.)
 
-- **Arquitectura general**  
-  `![Arquitectura](docs/arquitectura.png)`
 
 - **Vista del workflow en n8n**  
-  `![Workflow](docs/workflow.png)`
+  <img width="1077" height="741" alt="image" src="https://github.com/user-attachments/assets/0da3837a-5d11-4e63-b64b-c99a2263d2a5" />
+
 
 - **Ejemplos de uso (texto / audio / imagen / PDF)**  
-  `![Ejemplos](docs/ejemplos.png)`
+  <img width="756" height="315" alt="image" src="https://github.com/user-attachments/assets/79f93a90-e564-4152-ae23-e7797f23e46c" />
+  <img width="729" height="446" alt="image" src="https://github.com/user-attachments/assets/2cd9c23f-6aea-480a-a4e0-a83596cc9ae0" />
+  <img width="739" height="139" alt="image" src="https://github.com/user-attachments/assets/0e8a3135-d354-46ff-8621-11db900c8ed3" />
+  <img width="721" height="633" alt="image" src="https://github.com/user-attachments/assets/f6a35f37-0843-4e6e-b2f1-1870baa139a5" />
+
 
 ---
 

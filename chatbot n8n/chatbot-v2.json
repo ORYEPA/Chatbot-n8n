@@ -1,0 +1,1890 @@
+{
+  "name": "chatbot-v2",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "id": "38246f5d-0cf4-49ed-957e-0189243d0dec",
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "position": [
+        1248,
+        1472
+      ],
+      "webhookId": "d3978cae-2aca-4553-8ac7-ab89068deabc",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "2NPAoiPCB4ik6jpD",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "4cc0b70b-3ecc-4415-af2f-e50d4f302786",
+      "name": "Download Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2672,
+        1504
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OM3bv8bPze5xEDNZ",
+          "name": "chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "You are an advanced image description AI assistant . Your primary function is to provide detailed, accurate descriptions of images submitted through WhatsApp.\n\nCORE FUNCTIONALITY:\n- When presented with an image, you will analyze it thoroughly and provide a comprehensive description in English.\n- Your descriptions should capture both the obvious and subtle elements within the image.\n\nIMAGE DESCRIPTION GUIDELINES:\n- Begin with a broad overview of what the image contains\n- Describe key subjects, people, objects, and their relationships\n- Note significant visual elements such as colors, lighting, composition, and perspective\n- Identify any text visible in the image\n- Describe the setting or environment\n- Mention any notable actions or events taking place\n- Comment on mood, tone, or atmosphere when relevant\n- If applicable, identify landmarks, famous people, or cultural references\n\nRESPONSE FORMAT:\n- Start with \"Image Description:\" followed by your analysis\n- Structure your description in a logical manner (general to specific)\n- Use clear, precise language appropriate for visual description\n- Format longer descriptions with paragraphs to enhance readability\n- End with any notable observations that might require special attention\n\nLIMITATIONS:\n- If the image is blurry, low resolution, or difficult to interpret, acknowledge these limitations\n- If an image contains potentially sensitive content, provide a factual description without judgment\n- Do not make assumptions about elements that cannot be clearly determined\n\nYour descriptions should be informative, objective, and thorough, enabling someone who cannot see the image to form an accurate mental picture of its contents.",
+        "inputType": "base64",
+        "options": {
+          "detail": "auto"
+        }
+      },
+      "id": "528984be-b9ad-41c7-8b2e-ccbf275f7805",
+      "name": "Analyze Image",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        2912,
+        1504
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "b8898138-f987-4ef7-a5c1-d6d6b9c815f0",
+      "name": "Download Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2672,
+        1200
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OM3bv8bPze5xEDNZ",
+          "name": "chat bot"
+        },
+        "httpBasicAuth": {
+          "id": "UlDFzwxM4hIllfAX",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "e68bea55-f43a-4143-afca-1348b35e5879",
+      "name": "Transcribe Audio",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        2912,
+        1200
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "103825d0-8521-43c7-8246-9cc1faca42e1",
+      "name": "Download File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2672,
+        1840
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OM3bv8bPze5xEDNZ",
+          "name": "chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "98077f98-6dcf-4932-9363-19bf1fdc299e",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        2928,
+        1840
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $('WhatsApp Trigger').item.json.messages[0].document.id }}"
+      },
+      "id": "83ac997d-6ba0-4eb7-bd6c-80671f03c56c",
+      "name": "Get File Url",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        2448,
+        1840
+      ],
+      "webhookId": "280bd5de-32d7-4d8f-93d2-e91e3b0bc161",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f52d2aaa-e0b2-45e5-8c4b-ceef42182a0d",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.messages[0].document.mime_type }}",
+              "rightValue": "application/pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "56b23f60-57c3-4ea7-a4e8-64029a2e44c1",
+      "name": "Only PDF File",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2176,
+        1872
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  if (item.binary) {\n    const binaryPropertyNames = Object.keys(item.binary);\n    for (const propName of binaryPropertyNames) {\n      if (item.binary[propName].mimeType === 'audio/mp3') {\n        item.binary[propName].mimeType = 'audio/mpeg';\n      }\n    }\n  }\n}\n\nreturn $input.all();"
+      },
+      "id": "fa733b7b-16a7-4a9b-86b3-88395535ecd5",
+      "name": "Fix mimeType for Audio",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        5280,
+        2352
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=763476856829512",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "id": "0d99c2fa-945b-487a-b929-742e8b1b6859",
+      "name": "Send message",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        5088,
+        2640
+      ],
+      "webhookId": "23834751-5066-48ba-8e19-549680df2b27",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=763476856829512",
+        "recipientPhoneNumber": "={{ $('Input type').item.json.contacts[0].wa_id }}",
+        "messageType": "audio",
+        "mediaPath": "useMedian8n",
+        "additionalFields": {}
+      },
+      "id": "046328e9-e948-479c-ac42-567877350f1e",
+      "name": "Send audio",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        5504,
+        2352
+      ],
+      "webhookId": "d18b2c98-84e4-43cf-a532-0c47d5161684",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "470271332838881",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "=Sorry but you can only send PDF files",
+        "additionalFields": {}
+      },
+      "id": "aa20a408-42ab-4011-9cea-331e23cda4ce",
+      "name": "Incorrect format",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        2448,
+        2080
+      ],
+      "webhookId": "23834751-5066-48ba-8e19-549680df2b27",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c53cd9f9-77c1-4331-98ff-bfc9bdf95a3c",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "23b3750d-3638-4fd0-bab8-6082f53f19f9",
+      "name": "Text",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3200,
+        864
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "219577d5-b028-48fc-90be-980f4171ab68",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "435c020b-826b-4946-b19e-f9663f4f9f23",
+      "name": "Audio",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3200,
+        1200
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67552183-de2e-494a-878e-c2948e8cb6bb",
+              "name": "text",
+              "type": "string",
+              "value": "=User request on the image:\n{{ \"Describe the following image\" || $('WhatsApp Trigger').item.json.messages[0].image.caption }}\n\nImage description:\n{{ $json.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0139bb33-651e-4f37-901d-ccc705c9833a",
+      "name": "Image",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3168,
+        1504
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67552183-de2e-494a-878e-c2948e8cb6bb",
+              "name": "text",
+              "type": "string",
+              "value": "=User request on the file:\n{{ \"Describe this file\" || $('Only PDF File').item.json.messages[0].document.caption }}\n\nFile content:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d66b7190-f83b-483e-b3f3-8c220e2c815f",
+      "name": "File",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3200,
+        1840
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $('WhatsApp Trigger').item.json.messages[0].image.id }}"
+      },
+      "id": "117fd705-1f64-4bcc-88db-357df679fa3d",
+      "name": "Get Image Url",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        2432,
+        1504
+      ],
+      "webhookId": "280bd5de-32d7-4d8f-93d2-e91e3b0bc161",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $('WhatsApp Trigger').item.json.messages[0].audio.id }}"
+      },
+      "id": "3bf7364c-6263-4825-aec5-693adaed7d03",
+      "name": "Get Audio Url",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        2416,
+        1200
+      ],
+      "webhookId": "87caa300-7204-47b5-959a-94f4a8fbf8cf",
+      "typeVersion": 1,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "cEsGZsyGr1nZUIM8",
+          "name": "WhatsApp chat bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $('AI Agent1').item.json.output }}",
+        "voice": "onyx",
+        "options": {}
+      },
+      "id": "b23f8467-480a-45c1-a7df-e512290a8e13",
+      "name": "Generate Audio Response",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        5088,
+        2352
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Text",
+        "height": 240,
+        "width": 1340
+      },
+      "id": "0b139e60-fbf3-43ae-ae3f-40588f135443",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2080,
+        816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Voice",
+        "height": 240,
+        "width": 1340
+      },
+      "id": "3622ad4c-79c7-479f-a050-ff21d3077c77",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2080,
+        1152
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Image",
+        "height": 240,
+        "width": 1340
+      },
+      "id": "1f35e179-22d1-4019-a807-21803df51a46",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2080,
+        1472
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Document",
+        "height": 432,
+        "width": 1340
+      },
+      "id": "314b8ae2-e518-44a3-80a5-dc8482ab1fa9",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2080,
+        1808
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Response",
+        "height": 600,
+        "width": 1340,
+        "color": 5
+      },
+      "id": "a55cc899-3490-4b7c-b793-4f20605fc711",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4448,
+        2208
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b9d1d759-f585-4791-a743-b9d72951e77c",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].audio }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f37e975b-c112-4af8-badd-1fdbdb90d2f5",
+      "name": "From audio to audio?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        4704,
+        2496
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "08fd0c80-307e-4f45-b1de-35192ee4ec5e",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $json.messages[0].text.body }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "b7b64446-f1ea-4622-990c-22f3999a8269",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $json.messages[0].audio }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "202af928-a324-411a-bf15-68a349e7bf9e",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $json.messages[0].image }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c63299e9-6069-4bc6-afb9-7beebf6e3d69",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $json.messages[0].document }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "864be43a-e280-4c6d-bab4-878b88304807",
+      "name": "Input type",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        1536,
+        1424
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "content": "## Switch tarea\n",
+        "height": 1576,
+        "width": 2620,
+        "color": 3
+      },
+      "id": "665db584-bf65-49f2-8d37-28ffffa61c69",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1712,
+        2432
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=memory_{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "id": "bb8e47bf-937a-4230-890d-2f0a2412e1b2",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        2128,
+        2624
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consume the Gmail API to get the last emails",
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\", \"The maximal number of mails to receive.\", \"number\") }}",
+        "filters": {
+          "q": "in:inbox"
+        }
+      },
+      "id": "b9864a6b-6b57-412a-b9df-2ee64d0c9924",
+      "name": "Get last emails",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        1936,
+        2928
+      ],
+      "webhookId": "337cc370-cea4-4c29-bf30-2437e5d7609e",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consume Google Calendar API to receive a list of calendar events between \"start\" and \"end\". Make sure to pass datetime.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "XXXX@gmail.com",
+          "cachedResultName": "XXXX@gmail.com"
+        },
+        "limit": "={{ $fromAI('limit','the amount of event',\"number\") }}",
+        "timeMin": "={{ $fromAI('start','start date in format \"2017-07-01T13:00:00+02:00\"') }}",
+        "timeMax": "={{ $fromAI('end','end date in format \"2017-07-01T13:00:00+02:00\"') }}",
+        "options": {}
+      },
+      "id": "5814e9ed-1678-4c8f-bf22-3d7ac56f4bf8",
+      "name": "Get calendar events",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        2560,
+        2960
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vcli0pdfLzvwKGKH",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f566ba8b-b434-4ba9-9f50-c0db38ec6cf8",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        3216,
+        3120
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "47acd267-4449-4393-909c-f39f5caadbd6",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3488,
+        2928
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call the Gmail API to delete an email. Always request the email message id before calling this tool.",
+        "operation": "delete",
+        "messageId": "={{ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "id": "4dc363f1-48af-4353-a5ee-095d419892e4",
+      "name": "Delete an email",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        2288,
+        2944
+      ],
+      "webhookId": "0cfb9fbe-ec02-4ab3-87ac-ab949efdfe50",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call Gmail API to create a Draft message as Reply To an existing email or email thread. Pass the correct Thread-Id of the message. To get the Thread ID call the Get Email Tool before.",
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ $fromAI('Message', `The Text that should be send in reply`, 'string') }}",
+        "options": {
+          "threadId": "={{ $fromAI('thread-ID', `The ID of the thread. Need to be received from the Email Tool Response. Use the exact ID and better call the Get Email Tool again`, 'string') }}",
+          "sendTo": "={{ $fromAI('To_Email', `The email adress of the sender`, 'string') }}"
+        }
+      },
+      "id": "40b035ee-8e08-4c0e-9109-e14c4e47fb82",
+      "name": "Create an Email Draft as response to a thread",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        1968,
+        3088
+      ],
+      "webhookId": "471a112a-9787-4fa1-b681-8b69395d631a",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call Gmail API to create a New outgoing Draft message.",
+        "resource": "draft",
+        "subject": "={{ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ $fromAI('Message', `The Text that should be send in reply`, 'string') }}",
+        "options": {
+          "sendTo": "={{ $fromAI('To_Email', `The email adress of the sender`, 'string') }}"
+        }
+      },
+      "id": "11d316ea-3e0d-4996-b24f-ba9633cfb4c1",
+      "name": "Create an New Email Draft",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        2128,
+        2928
+      ],
+      "webhookId": "0321c8e3-b0c1-44ff-9e8b-671db71e3f51",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consume Google Calendar API to add a new event or meeting to the calender",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "XXXX@gmail.com",
+          "cachedResultName": "XXXX@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "id": "b3971701-2ca4-4d4f-9463-e71230f78d60",
+      "name": "Add an calender entry",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        2752,
+        2960
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vcli0pdfLzvwKGKH",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consume the Gmail API to receive an email by message-id",
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "id": "aaba5b0d-012e-4889-b780-70878188738c",
+      "name": "Get an email by MessageID",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        2192,
+        3104
+      ],
+      "webhookId": "2f916427-b445-4c08-841f-bd13b5f99c85",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Can answer questions and do research in previous email conversations. Use this tool whenever you need more context about past conversations to an email. \nFor better retrieval and more context always pass the email-adresses to the query!\n"
+      },
+      "id": "a1ec9851-269e-411a-b149-c329215549ff",
+      "name": "Research context and infos in previous conversations",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        3248,
+        2720
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "6b56e3f8-5b00-43d5-9dbf-bcca60305336",
+      "name": "Threads History Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "position": [
+        3184,
+        2944
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Formats the date in the name of the day of the week. Always use this before you output weekdays.",
+        "operation": "formatDate",
+        "date": "={{ $fromAI('Date', ``, 'string') }}",
+        "format": "custom",
+        "customFormat": "EEEE dd MM ",
+        "outputFieldName": "=formattedDate",
+        "options": {}
+      },
+      "id": "97ae94d5-8627-4713-974b-816265fc16ab",
+      "name": "Determine the name of the day of the week",
+      "type": "n8n-nodes-base.dateTimeTool",
+      "position": [
+        2640,
+        3120
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "0226c32e-27cc-464b-bae2-60d8e0d4d0ab",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1888,
+        2592
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "9VwAV3hDhAl3ALy7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Email Access Tools",
+        "height": 460,
+        "width": 648
+      },
+      "id": "f6284baa-bdaf-4b52-aaac-5d588bd5e9ab",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1760,
+        2816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Calender Access Tools",
+        "height": 460,
+        "width": 520,
+        "color": 6
+      },
+      "id": "7d843c55-1c2f-406f-bd8b-8c52102c1aa2",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2496,
+        2816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Knowlede about past email conversations",
+        "height": 620,
+        "width": 520,
+        "color": 5
+      },
+      "id": "4449bcf5-b537-4a03-88b5-b81e890ed3be",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3104,
+        2656
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call Gmail API to  send  a new message.",
+        "sendTo": "={{ $fromAI('To_Email', `The email adress of the sender`, 'string') }}",
+        "subject": "={{ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ $fromAI('Message', `The Text that should be send in reply`, 'string') }}",
+        "options": {}
+      },
+      "id": "7a5dd0e1-fda5-46f0-b097-0d9204db9ca7",
+      "name": "Send new message",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        1792,
+        3088
+      ],
+      "webhookId": "0321c8e3-b0c1-44ff-9e8b-671db71e3f51",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YgoSap0InwbWcbaU",
+          "name": "correo profesional"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Notio databases financial tracking\n",
+        "height": 460,
+        "width": 408,
+        "color": 7
+      },
+      "id": "3eb4037c-75f2-4b7c-90e5-7f9512579bdd",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3744,
+        2800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2549baff-5007-8076-a7bb-c49ded108de6",
+          "mode": "list",
+          "cachedResultName": "Financial Tracking",
+          "cachedResultUrl": "https://www.notion.so/2549baff50078076a7bbc49ded108de6"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Descripcion|title",
+              "title": "={{ $fromAI('description', ``, 'string') }}"
+            },
+            {
+              "key": "Categoria|rich_text",
+              "textContent": "={{ $fromAI('category', ``, 'string') }}"
+            },
+            {
+              "key": "Monto|number",
+              "numberValue": "={{ $fromAI('mount', ``, 'number') }}"
+            },
+            {
+              "key": "Fecha|date",
+              "includeTime": false,
+              "date": "={{ $fromAI('date') }}"
+            },
+            {
+              "key": "Tipo|rich_text",
+              "textContent": "={{ $fromAI('type', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        3776,
+        2928
+      ],
+      "id": "b4272072-2b47-4b90-86b7-f94c29baf409",
+      "name": "Create register in Financial tracking",
+      "credentials": {
+        "notionApi": {
+          "id": "flTwaRt9fD3AoAhd",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "2549baff-5007-8076-a7bb-c49ded108de6",
+          "mode": "list",
+          "cachedResultName": "Financial Tracking",
+          "cachedResultUrl": "https://www.notion.so/2549baff50078076a7bbc49ded108de6"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        3936,
+        2928
+      ],
+      "id": "8b43dd7f-68fd-47b3-b072-346b617ff71f",
+      "name": "Consult register in Financial tracking",
+      "credentials": {
+        "notionApi": {
+          "id": "flTwaRt9fD3AoAhd",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are an intelligent assistant ,task intelligent assistant ,AI Assistant Prompt – Inbox & Calendar and You are an financial  intelligent assistant. Your purpose is to analyze various types of input and provide helpful, accurate responses. \n\n## Role  \nYou are my personal AI assistant for ask, email ,calendar management ,financial management , task management , notion database.\nI am Andrea Peyro , developer.  \nYou support me in organizing my Gmail inbox, keeping track of important topics, handling emails, managing appointments efficiently , handling income, managing my expenses ,organizing my notion database and managing my projects and task. \nYou provide suggestions and analyses, and act autonomously when retrieving information using the available tools.\n\n---\n\n## CAPABILITIES:\n- Process and respond to text messages\n- Analyze uploaded files\n- Interpret and describe images\n- Transcribe and understand voice messages\n\n## INPUT HANDLING:\n1. For text messages: Analyze the content, understand the intent, and provide a relevant response.\n2. For file analysis: Examine the file content, extract key information, and summarize important points also based on the questions asked.\n3. For image analysis: Describe what you see in the image, identify key elements, and respond to any questions about the image.\n4. For voice messages: Transcribe the audio, understand the message, and respond appropriately.\n\n\n## Scope  \nYou analyze emails and calendar data, identify relevant information, prioritize, and assist in processing.  \nYou can access email content, draft responses, suggest calendar entries, and identify available time slots – based on the tools provided. Use the tools proactively.\nYou analyze notion database and identify relevant information, prioritize, and assist in processing.  \nYou can access notion content, create register , suggest categories entries, and identify available ways to save money .\nYou can access notion content, create register , suggest task or projects entries, and identify available ways to save time.\n\n> Today is `{{ $now }}` in timezone +2.  \n> The user is in timezone +2.\n\nAlways base your responses on the current date: \n{{ DateTime.local().toFormat('cccc d LLLL yyyy') }}.\n---\n\n\n## Command\n\n- Regularly provide an overview of current and prioritized emails.  \n- Detect requests, invitations, or to-dos in emails and suggest appropriate actions or scheduling.  \n- Propose meaningful draft replies suitable to the context.  \n- Monitor the calendar for upcoming appointments, conflicts, or free time slots.  \n- Suggest daily or weekly structures based on calendar availability.  \n- Support planning and coordination directly from the context of emails.  \n- When suggesting appointments, always check availability in the calendar.  \n- Note that calendar timestamps are in UTC and must be converted before evaluation and display.  \n- When handling emails and using the corresponding tools, remember the `MessageID` so it can be passed to other tools.  \n  Always show the `MessageID` to the user so it remains accessible in your conversation history.\n- Regularly provide an overview of current and prioritized income and expenditure.  \n- Monitor the database for upcoming income, expenditue, or categories.  \n- Suggest daily or weekly ways to save money.  \n- Suggest daily or weekly ways to save time in projects and tasks.  \n\n---\n\n## Format\n\n- Clear, structured presentation of suggestions (e.g., lists, tables, bullet points).  \n- Draft replies must always be **friendly and professional** – respectful, clear, without unnecessary phrasing.  \n- Calendar and time suggestions must be easy to read (e.g., “next Tuesday at 2:00 PM”).\n\n---\n\n## Constraints\n\n- Only send emails or create appointments after confirmation from the user.  \n- Always act in the spirit of **relief, clarity, and efficiency**.\n\n---\n## RESPONSE GUIDELINES:\n- Be concise but thorough\n- Prioritize accuracy over speculation\n- Maintain a professional and helpful tone\n- When uncertain, acknowledge limitations\n- Format responses for easy reading on mobile devices\n- Include actionable information when appropriate\n\n---\n\n\nAnalyze all inputs carefully before responding. Your goal is to provide value through accurate information and helpful assistance, always ansewer in spanish."
+        }
+      },
+      "id": "04334ca0-1c8d-4469-a490-c34b277bcdc3",
+      "name": "Assistant Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2656,
+        2512
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Update a database page in Notion",
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Database_Page', ``, 'string') }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        3872,
+        3104
+      ],
+      "id": "2ca69eee-dc2d-47bf-a06f-b6d98cc6dae9",
+      "name": "Create register in Financial tracking1",
+      "credentials": {
+        "notionApi": {
+          "id": "flTwaRt9fD3AoAhd",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Notio databases proyects and tasks",
+        "height": 460,
+        "width": 776,
+        "color": 7
+      },
+      "id": "cda14314-367b-441e-8750-891c97de21ea",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1968,
+        3424
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "2399baff-5007-8156-beb5-caaa8c08d04a",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://www.notion.so/2399baff50078156beb5caaa8c08d04a"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        3552
+      ],
+      "id": "ead5d607-d4a6-46d6-9e4f-12c2fee1de8c",
+      "name": "Get many projects",
+      "credentials": {
+        "notionApi": {
+          "id": "flTwaRt9fD3AoAhd",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "2399baff-5007-81af-b547-db661c161a3c",
+          "mode": "list",
+          "cachedResultName": "Tasks",
+          "cachedResultUrl": "https://www.notion.so/2399baff500781afb547db661c161a3c"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        2224,
+        3568
+      ],
+      "id": "7ef4cbf3-ebe1-4e34-95fb-fc06e01d001b",
+      "name": "Get many tasks",
+      "credentials": {
+        "notionApi": {
+          "id": "flTwaRt9fD3AoAhd",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Different input",
+        "height": 240,
+        "width": 412
+      },
+      "id": "80482cee-d78d-4dc9-ae9c-e79618245729",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1456,
+        2032
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c53cd9f9-77c1-4331-98ff-bfc9bdf95a3c",
+              "name": "text",
+              "type": "string",
+              "value": "=Solo puedes enviar mensajes de texto, imágenes, archivos de audio y documentos PDF."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4e4a7acf-93ba-4e07-8bc8-5b0c51503356",
+      "name": "Different input",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1648,
+        2080
+      ],
+      "typeVersion": 3.4
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "15551430880",
+            "phone_number_id": "763476856829512"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Andrea Peyro"
+              },
+              "wa_id": "5215559439127"
+            }
+          ],
+          "messages": [
+            {
+              "from": "5215559439127",
+              "id": "wamid.HBgNNTIxNTU1OTQzOTEyNxUCABIYFjNFQjBDNEY4NUVFRDA1MTExREI5RjAA",
+              "timestamp": "1755642731",
+              "type": "sticker",
+              "sticker": {
+                "mime_type": "image/webp",
+                "sha256": "KqSxq6vGbm1OnYYFFlhEu195B8O3mID6c8NbfIDkmZU=",
+                "id": "1180207067205487",
+                "animated": true
+              }
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "File": {
+      "main": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text": {
+      "main": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio": {
+      "main": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image": {
+      "main": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input type": {
+      "main": [
+        [
+          {
+            "node": "Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Audio Url",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Image Url",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Only PDF File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Different input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get File Url": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image": {
+      "main": [
+        [
+          {
+            "node": "Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio Url": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Url": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only PDF File": {
+      "main": [
+        [
+          {
+            "node": "Get File Url",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Incorrect format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio": {
+      "main": [
+        [
+          {
+            "node": "Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Input type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "From audio to audio?": {
+      "main": [
+        [
+          {
+            "node": "Generate Audio Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fix mimeType for Audio": {
+      "main": [
+        [
+          {
+            "node": "Send audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Audio Response": {
+      "main": [
+        [
+          {
+            "node": "Fix mimeType for Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get calendar events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Threads History Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research context and infos in previous conversations",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an Email Draft as response to a thread": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an New Email Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add an calender entry": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an email by MessageID": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research context and infos in previous conversations": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads History Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Research context and infos in previous conversations",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Determine the name of the day of the week": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send new message": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create register in Financial tracking": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consult register in Financial tracking": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assistant Agent": {
+      "main": [
+        [
+          {
+            "node": "From audio to audio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create register in Financial tracking1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many projects": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Different input": {
+      "main": [
+        [
+          {
+            "node": "Assistant Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "d0e8ffcd-aadf-4e6e-a520-f68c29f042ed",
+  "meta": {
+    "templateId": "3586",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d05be8ffbd82df9a1ed0e0de05cffc2959dca09d4d364bca7eae1a3273641b49"
+  },
+  "id": "VZ8OcDQ0BpOB6WoW",
+  "tags": []
+}
